@@ -1,5 +1,7 @@
 package main.techcorp.model;
 
+import java.util.Objects;
+
 public class Employee {
     private String firstName;
     private String lastName;
@@ -66,10 +68,24 @@ public class Employee {
     }
 
     // equals, hashCode, toString
+    @Override
+    public boolean equals(Object o) {
+        return (o instanceof Employee e) && Objects.equals(email, e.email);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(email);
+    }
 
     @Override
     public String toString() {
-        return String.format("%s %s %s - %s at %s, Salary: %.2f",
-                firstName, lastName, email, position, company, salary);
+        return "Employee | " +
+                firstName + " " +
+                lastName +
+                ", email: " + email +
+                ", company: " + company +
+                ", position: " + position +
+                ", salary: " + salary;
     }
 }

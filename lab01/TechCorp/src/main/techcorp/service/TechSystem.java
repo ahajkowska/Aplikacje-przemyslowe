@@ -6,7 +6,7 @@ import main.techcorp.model.Position;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class TechSystem {
+public class TechSystem implements EmployeeService {
 
     private final List<Employee> employees;
 
@@ -23,8 +23,8 @@ public class TechSystem {
     }
 
     // Wyświetlanie listy wszystkich pracowników w systemie
-    public void displayAllEmployees() {
-        employees.forEach(System.out::println);
+    public List<Employee> getAllEmployees() {
+        return new ArrayList<>(employees);
     }
 
     // Wyszukiwanie pracowników zatrudnionych w konkretnej firmie - zaimplementuj jako operacje filtrowania kolekcji z wykorzystaniem Stream API.

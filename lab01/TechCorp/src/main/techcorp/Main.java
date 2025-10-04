@@ -14,12 +14,12 @@ public class Main {
         system.addEmployee(new Employee("Magda", "Gessler", "magda.gessler@gmail.com", "MiniCorp", Position.INTERN, 3000));
 
         // Testing duplicate email
-        boolean added = system.addEmployee(new Employee("Duplicate", "Email", "harry.potter@techcorp.com",
+        boolean added = system.addEmployee(new Employee("Duplicate", "Email", "harry.potter@techcorp.eu",
                 "TechCorp", Position.DEVELOPER, 8000));
         System.out.println("Employee with duplicate email added: " + added);
 
         System.out.println("\n--- All Employees ---");
-        system.displayAllEmployees();
+        system.getAllEmployees().forEach(System.out::println);
 
         //operacje analityczne
         String chosenCompany = "TechCorp";

@@ -10,12 +10,19 @@ public class Employee {
     private Position position;
     private double salary;
 
-    public Employee(String firstName, String lastName, String email, String company, Position position, double salary) {
+    // konstruktor z bazową pensją
+    public Employee(String firstName, String lastName, String email, String company, Position position) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.company = company;
         this.position = position;
+        this.salary = position.getBaseSalary();
+    }
+
+    // konstruktor z wybraną pensją
+    public Employee(String firstName, String lastName, String email, String company, Position position, double salary) {
+        this(firstName, lastName, email, company, position);
         this.salary = salary;
     }
 
@@ -23,48 +30,24 @@ public class Employee {
         return firstName;
     }
 
-    public void setFirstName(String newFirstName) {
-        this.firstName = newFirstName;
-    }
-
     public String getLastName() {
         return lastName;
-    }
-
-    public void setLastName(String newLastName) {
-        this.lastName = newLastName;
     }
 
     public String getEmail() {
         return email;
     }
 
-    public void setEmail(String newEmail) {
-        this.email = newEmail;
-    }
-
     public String getCompany() {
         return company;
-    }
-
-    public void setCompany(String newCompany) {
-        this.company = newCompany;
     }
 
     public Position getPosition() {
         return position;
     }
 
-    public void setPosition(Position newPosition) {
-        this.position = newPosition;
-    }
-
     public double getSalary() {
         return salary;
-    }
-
-    public void setSalary(double newSalary) {
-        this.salary = newSalary;
     }
 
     // equals, hashCode, toString

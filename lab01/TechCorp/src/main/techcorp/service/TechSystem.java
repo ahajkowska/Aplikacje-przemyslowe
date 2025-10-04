@@ -8,10 +8,10 @@ import java.util.stream.Collectors;
 
 public class TechSystem implements EmployeeService {
 
-    private final List<Employee> employees;
+    private final Set<Employee> employees;
 
     public TechSystem() {
-        this.employees = new ArrayList<>();
+        this.employees = new HashSet<>();
     }
 
     // Dodawanie nowego pracownika do systemu z walidacją unikalności adresu email przed dodaniem

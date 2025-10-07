@@ -13,7 +13,7 @@ public class Main {
         system.addEmployee(new Employee("Harry", "Potter", "harry.potter@techcorp.eu", "TechCorp", Position.DEVELOPER, 15000));
         system.addEmployee(new Employee("Magda", "Gessler", "magda.gessler@gmail.com", "MiniCorp", Position.INTERN));
 
-        // Testing duplicate email
+        // sprawdzanie duplicate email
         boolean added = system.addEmployee(new Employee("Duplicate", "Email", "harry.potter@techcorp.eu",
                 "TechCorp", Position.DEVELOPER, 8000));
         System.out.println("Employee with duplicate email added: " + added);

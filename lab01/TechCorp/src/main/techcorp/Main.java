@@ -28,7 +28,7 @@ public class Main {
 
         System.out.println("\n--- Employees sorted by last name ---");
         system.getEmployeesSortedByLastName().forEach(
-                e -> System.out.println(e.getLastName() + ", " + e.getFirstName())
+                e -> System.out.println(e.getLastName() + " " + e.getFirstName())
         );
 
         System.out.println("\n--- Employees grouped by position ---");

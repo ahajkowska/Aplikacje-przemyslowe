@@ -16,7 +16,7 @@ public class TechSystem implements EmployeeService {
 
     // Dodawanie nowego pracownika do systemu z walidacją unikalności adresu email przed dodaniem
     public boolean addEmployee(Employee employee) {
-        if (employees.stream().anyMatch(e -> e.getEmail().equalsIgnoreCase(employee.getEmail()))) {
+        if (employees.stream().anyMatch(e -> e.getEmail().equals(employee.getEmail()))) {
             return false;
         }
         return employees.add(employee);

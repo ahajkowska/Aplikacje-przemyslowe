@@ -3,11 +3,11 @@ package main.techcorp.model;
 import java.util.Objects;
 
 public class Employee {
-    private String firstName;
-    private String lastName;
-    private String email;
-    private String company;
-    private Position position;
+    private final String firstName;
+    private final String lastName;
+    private final String email;
+    private final String company;
+    private final Position position;
     private double salary;
 
     // konstruktor z bazową pensją

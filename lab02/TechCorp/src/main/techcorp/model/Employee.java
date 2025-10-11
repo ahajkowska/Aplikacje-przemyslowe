@@ -12,6 +12,17 @@ public class Employee {
 
     // konstruktor z bazową pensją
     public Employee(String firstName, String lastName, String email, String company, Position position) {
+        if (firstName == null || firstName.isBlank())
+            throw new IllegalArgumentException("First name cannot be null or blank");
+        if (lastName == null || lastName.isBlank())
+            throw new IllegalArgumentException("Last name cannot be null or blank");
+        if (email == null || email.isBlank())
+            throw new IllegalArgumentException("Email cannot be null or blank");
+        if (company == null || company.isBlank())
+            throw new IllegalArgumentException("Company cannot be null or blank");
+        if (position == null)
+            throw new IllegalArgumentException("Position cannot be null");
+
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
@@ -22,7 +33,24 @@ public class Employee {
 
     // konstruktor z wybraną pensją
     public Employee(String firstName, String lastName, String email, String company, Position position, double salary) {
-        this(firstName, lastName, email, company, position);
+        if (firstName == null || firstName.isBlank())
+            throw new IllegalArgumentException("First name cannot be null or blank");
+        if (lastName == null || lastName.isBlank())
+            throw new IllegalArgumentException("Last name cannot be null or blank");
+        if (email == null || email.isBlank())
+            throw new IllegalArgumentException("Email cannot be null or blank");
+        if (company == null || company.isBlank())
+            throw new IllegalArgumentException("Company cannot be null or blank");
+        if (position == null)
+            throw new IllegalArgumentException("Position cannot be null");
+        if (salary < 0)
+            throw new IllegalArgumentException("Salary cannot be negative");
+
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.company = company;
+        this.position = position;
         this.salary = salary;
     }
 

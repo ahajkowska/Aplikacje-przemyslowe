@@ -8,6 +8,45 @@ import static org.junit.jupiter.api.Assertions.*;
 class EmployeeTest {
 
     @Test
+    void testCreateEmployeeWithValidData() {
+        Employee e = new Employee("Harry", "Potter", "harry@firma.com", "TechCorp", Position.DEVELOPER, 5000);
+        assertEquals("Harry", e.getFirstName());
+        assertEquals("Potter", e.getLastName());
+        assertEquals("harry@firma.com", e.getEmail());
+        assertEquals("TechCorp", e.getCompany());
+        assertEquals(Position.DEVELOPER, e.getPosition());
+        assertEquals(5000, e.getSalary());
+    }
+
+    @Test
+    void testThrowExceptionWhenFirstNameIsNull() {
+        assertThrows(IllegalArgumentException.class, () ->
+                new Employee(null, "Potter", "harry@corp.com", "TechCorp", Position.DEVELOPER, 5000)
+        );
+    }
+
+    @Test
+    void testThrowExceptionWhenSalaryIsNegative() {
+        assertThrows(IllegalArgumentException.class, () ->
+                new Employee("Harry", "Potter", "harry@corp.com", "TechCorp", Position.DEVELOPER, -100)
+        );
+    }
+
+    @Test
+    void testThrowExceptionWhenPositionIsNull() {
+        assertThrows(IllegalArgumentException.class, () ->
+                new Employee("Harry", "Potter", "harry@corp.com", "TechCorp", null, 4000)
+        );
+    }
+
+    @Test
+    void testThrowExceptionWhenEmailIsBlank() {
+        assertThrows(IllegalArgumentException.class, () ->
+                new Employee("Harry", "Potter", "   ", "TechCorp", Position.DEVELOPER, 4000)
+        );
+    }
+
+    @Test
     void testEmployeesWithSameEmailAreEqual() {
         Employee e1 = new Employee("Michael", "Jordan", "email@firma.com", "Firma", Position.DEVELOPER, 9000);
         Employee e2 = new Employee("Hannah", "Montana", "email@firma.com", "Firma", Position.DEVELOPER, 9000);

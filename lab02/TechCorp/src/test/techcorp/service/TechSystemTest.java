@@ -44,6 +44,11 @@ public class TechSystemTest {
     }
 
     @Test
+    void testThrowExceptionWhenAddingNullEmployee() {
+        assertThrows(IllegalArgumentException.class, () -> techSystem.addEmployee(null));
+    }
+
+    @Test
     void testGetAllEmployees() {
         List<Employee> allEmployees = techSystem.getAllEmployees();
         assertEquals(3, allEmployees.size());
@@ -57,6 +62,11 @@ public class TechSystemTest {
         List<Employee> employees = techSystem.findEmployeesInCompany("TechCorp");
         assertEquals(2, employees.size());
         assertTrue(employees.stream().allMatch(e -> e.getCompany().equals("TechCorp")));
+    }
+
+    @Test
+    void testThrowExceptionWhenCompanyNameIsBlank() {
+        assertThrows(IllegalArgumentException.class, () -> techSystem.findEmployeesInCompany("  "));
     }
 
     @Test

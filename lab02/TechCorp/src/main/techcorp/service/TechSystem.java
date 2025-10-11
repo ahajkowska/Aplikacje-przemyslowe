@@ -16,6 +16,9 @@ public class TechSystem implements EmployeeService {
 
     // Dodawanie nowego pracownika do systemu z walidacją unikalności adresu email przed dodaniem
     public boolean addEmployee(Employee employee) {
+        if (employee == null) {
+            throw new IllegalArgumentException("Employee cannot be null");
+        }
         if (employees.stream().anyMatch(e -> e.getEmail().equalsIgnoreCase(employee.getEmail()))) {
             return false;
         }
@@ -29,6 +32,9 @@ public class TechSystem implements EmployeeService {
 
     // Wyszukiwanie pracowników zatrudnionych w konkretnej firmie - zaimplementuj jako operacje filtrowania kolekcji z wykorzystaniem Stream API.
     public List<Employee> findEmployeesInCompany(String company) {
+        if (company == null || company.isBlank()) {
+            throw new IllegalArgumentException("Company name cannot be null or blank");
+        }
         return employees.stream()
                 .filter(e -> e.getCompany().equals(company))
                 .toList();

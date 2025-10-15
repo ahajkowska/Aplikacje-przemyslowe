@@ -78,7 +78,6 @@ public class Employee {
         return salary;
     }
 
-    // equals, hashCode, toString
     @Override
     public boolean equals(Object o) {
         return (o instanceof Employee e) && Objects.equals(email, e.email);

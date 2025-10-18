@@ -1,8 +1,8 @@
-package main.techcorp.service;
+package service;
 
-import main.techcorp.model.CompanyStatistics;
-import main.techcorp.model.Employee;
-import main.techcorp.model.Position;
+import model.CompanyStatistics;
+import model.Employee;
+import model.Position;
 
 import java.util.*;
 import java.util.stream.Collectors;

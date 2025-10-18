@@ -1,9 +1,9 @@
-package main.techcorp.service;
+package service;
 
-import main.techcorp.exception.InvalidDataException;
-import main.techcorp.model.Employee;
-import main.techcorp.model.ImportSummary;
-import main.techcorp.model.Position;
+import exception.InvalidDataException;
+import model.Employee;
+import model.ImportSummary;
+import model.Position;
 
 import java.io.BufferedReader;
 import java.io.FileReader;

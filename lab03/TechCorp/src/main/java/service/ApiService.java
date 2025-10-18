@@ -1,11 +1,11 @@
-package main.techcorp.service;
+package service;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import main.techcorp.exception.ApiException;
-import main.techcorp.model.Employee;
-import main.techcorp.model.Position;
+import exception.ApiException;
+import model.Employee;
+import model.Position;
 
 import java.io.IOException;
 import java.net.URI;

@@ -1,8 +1,7 @@
 firstName,lastName,email,company,position,salary
-Will,Smith,willsmith@dataCorp.com,DataCorp,MANAGER,12500
-
-Hermiona,Granger,hermiona.granger2@techcorp.com,TechCorp,VICE_PRESIDENT,18500
-Adam,Małysz,adam.malysz2@othercorp.com,OtherCorp,INTERN,2500
+Harry,Potter,harrypotter@dataCorp.com,DataCorp,MANAGER,12500
+Hermiona,Granger,hermiona.granger@techcorp.com,TechCorp,VICE_PRESIDENT,18500
+Adam,Małysz,adam.malysz@othercorp.com,OtherCorp,INTERN,2500
 Błędny,Wiersz,blad@firma.com,Firma,NIEISTNIEJACE_STANOWISKO,5000
 Inny,Błąd,inny.blad@firma.com,Firma,DEVELOPER,-1000
 Za,Mało,Kolumn,OtherCorp,DEVELOPER

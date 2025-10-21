@@ -17,8 +17,11 @@ public class EmployeeService {
 
     // Dodawanie nowego pracownika do systemu z walidacją unikalności adresu email przed dodaniem
     public boolean addEmployee(Employee employee) {
-        if (employee == null || isEmailTaken(employee.getEmail())) {
-            return false;
+        if (employee == null) {
+            throw new IllegalArgumentException("Employee cannot be null");
+        }
+        if (isEmailTaken(employee.getEmail())) {
+            throw new IllegalArgumentException("Employee with this email already exists");
         }
         return employees.add(employee);
     }

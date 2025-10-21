@@ -27,6 +27,13 @@ public class ApiService {
         this.gson = new Gson();
     }
 
+    // testowy
+    public ApiService(String apiUrl, HttpClient httpClient) {
+        this.apiUrl = apiUrl;
+        this.httpClient = httpClient;
+        this.gson = new Gson();
+    }
+
     public List<Employee> fetchEmployeesFromApi() throws ApiException {
         try {
             HttpRequest request = HttpRequest.newBuilder()

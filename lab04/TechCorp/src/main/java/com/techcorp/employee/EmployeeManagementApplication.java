@@ -9,12 +9,13 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.ImportResource;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.ComponentScan;
 
 import java.util.List;
 
 @SpringBootApplication
-@ImportResource("classpath:employees-beans.xml")
+@ComponentScan(basePackages = "com.techcorp.employee")
 public class EmployeeManagementApplication implements CommandLineRunner {
 
     private final EmployeeService employeeService;
@@ -22,15 +23,6 @@ public class EmployeeManagementApplication implements CommandLineRunner {
     private final ApiService apiService;
     private final List<Employee> xmlEmployees;
 
-    /**
-     * Konstruktor z wstrzykiwaniem wszystkich zależności.
-     * Spring automatycznie dostarczy instancje wszystkich serwisów oraz listę pracowników z XML.
-     *
-     * @param employeeService serwis zarządzający pracownikami
-     * @param importService serwis importu z CSV
-     * @param apiService serwis pobierania danych z REST API
-     * @param xmlEmployees lista pracowników zdefiniowana w pliku XML
-     */
     public EmployeeManagementApplication(
             EmployeeService employeeService,
             ImportService importService,
@@ -48,9 +40,8 @@ public class EmployeeManagementApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        System.out.println("=".repeat(80));
-        System.out.println("EMPLOYEE MANAGEMENT SYSTEM - DEMONSTRATION");
-        System.out.println("=".repeat(80));
+        System.out.println("EMPLOYEE MANAGEMENT APP");
+        System.out.println("-".repeat(80));
         System.out.println();
 
         // 1. IMPORT PRACOWNIKÓW Z PLIKU CSV
@@ -60,11 +51,10 @@ public class EmployeeManagementApplication implements CommandLineRunner {
         String csvPath = "src/main/resources/employees.csv";
         ImportSummary csvImportSummary = importService.importFromCsv(csvPath);
 
-        System.out.println("Import z pliku CSV zakończony:");
-        System.out.println("  - Zaimportowano: " + csvImportSummary.getImportedCount() + " pracowników");
+        System.out.println("- Zaimportowano: " + csvImportSummary.getImportedCount() + " pracowników");
 
         if (!csvImportSummary.getErrors().isEmpty()) {
-            System.out.println("  - Błędy podczas importu:");
+            System.out.println("- Błędy podczas importu:");
             csvImportSummary.getErrors().forEach((error) ->
                     System.out.println(error)
             );
@@ -83,18 +73,18 @@ public class EmployeeManagementApplication implements CommandLineRunner {
                 boolean added = employeeService.addEmployee(employee);
                 if (added) {
                     xmlImportedCount++;
-                    System.out.println("  ✓ Dodano: " + employee.getFirstName() + " " +
+                    System.out.println("Dodano: " + employee.getFirstName() + " " +
                             employee.getLastName() + " (" + employee.getEmail() + ")");
                 }
             } catch (IllegalArgumentException e) {
                 xmlErrorsCount++;
-                System.out.println("  ✗ Błąd dla: " + employee.getEmail() + " - " + e.getMessage());
+                System.out.println("Błąd dla: " + employee.getEmail() + " - " + e.getMessage());
             }
         }
 
         System.out.println("\nPodsumowanie importu z XML:");
-        System.out.println("  - Zaimportowano: " + xmlImportedCount + " pracowników");
-        System.out.println("  - Błędy: " + xmlErrorsCount);
+        System.out.println("- Zaimportowano: " + xmlImportedCount + " pracowników");
+        System.out.println("- Błędy: " + xmlErrorsCount);
         System.out.println();
 
         // 3. POBRANIE DANYCH Z REST API
@@ -118,7 +108,6 @@ public class EmployeeManagementApplication implements CommandLineRunner {
 
             System.out.println("Pobrano z API: " + apiEmployees.size() + " pracowników");
             System.out.println("Dodano do systemu: " + apiImportedCount + " nowych pracowników");
-            System.out.println("(część emaili mogła już istnieć w systemie)");
         } catch (Exception e) {
             System.out.println("Błąd podczas pobierania danych z API: " + e.getMessage());
         }
@@ -176,26 +165,22 @@ public class EmployeeManagementApplication implements CommandLineRunner {
         List<Employee> inconsistentSalaries = employeeService.validateSalaryConsistency();
 
         if (inconsistentSalaries.isEmpty()) {
-            System.out.println("✓ Wszystkie wynagrodzenia są zgodne z bazowymi stawkami stanowisk.");
+            System.out.println("Wszystkie wynagrodzenia są zgodne z bazowymi stawkami stanowisk.");
         } else {
-            System.out.println("⚠ Znaleziono " + inconsistentSalaries.size() +
+            System.out.println("Znaleziono " + inconsistentSalaries.size() +
                     " pracowników z wynagrodzeniem poniżej bazowej stawki:");
             System.out.println();
 
             inconsistentSalaries.forEach(emp -> {
                 double baseSalary = emp.getPosition().getBaseSalary();
-                double difference = baseSalary - emp.getSalary();
-                System.out.println("  - " + emp.getFirstName() + " " + emp.getLastName());
-                System.out.println("    Stanowisko: " + emp.getPosition());
-                System.out.println("    Aktualne wynagrodzenie: " + emp.getSalary() + " PLN");
-                System.out.println("    Bazowa stawka: " + baseSalary + " PLN");
-                System.out.println("    Różnica: -" + String.format("%.2f", difference) + " PLN");
+                System.out.println(" - " + emp.getFirstName() + " " + emp.getLastName());
+                System.out.println("Stanowisko: " + emp.getPosition());
+                System.out.println("Aktualne wynagrodzenie: " + emp.getSalary() + " PLN");
+                System.out.println("Bazowa stawka: " + baseSalary + " PLN");
                 System.out.println();
             });
         }
 
-        System.out.println("=".repeat(80));
-        System.out.println("DEMONSTRATION COMPLETED");
-        System.out.println("=".repeat(80));
+        System.out.println("!!! Koniec !!!");
     }
 }

@@ -1,5 +1,6 @@
 package service;
 
+import com.google.gson.Gson;
 import com.techcorp.employee.service.ApiService;
 import com.techcorp.employee.exception.ApiException;
 import com.techcorp.employee.model.Employee;
@@ -33,7 +34,8 @@ class ApiServiceTest {
     @BeforeEach
     void setUp() {
         closeable = MockitoAnnotations.openMocks(this);
-        apiService = new ApiService(API_URL, httpClient);
+        Gson gson = new Gson();
+        apiService = new ApiService(API_URL, httpClient, gson);
     }
 
     @AfterEach

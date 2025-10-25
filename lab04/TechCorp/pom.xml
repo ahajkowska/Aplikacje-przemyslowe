@@ -46,14 +46,14 @@
         </dependency>
 
         <!-- (opcjonalnie, jeśli masz problemy z mockowaniem HttpClient) -->
-        <!--
+
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-inline</artifactId>
             <version>5.2.0</version>
             <scope>test</scope>
         </dependency>
-        -->
+
     </dependencies>
 
     <build>
@@ -71,6 +71,14 @@
                 <version>3.2.2</version>
                 <configuration>
                     <useModulePath>false</useModulePath>
+                    <argLine>
+                        @{argLine}
+                        --add-opens java.base/java.lang=ALL-UNNAMED
+                        --add-opens java.base/java.util=ALL-UNNAMED
+                        --add-opens java.base/java.net=ALL-UNNAMED
+                        --add-opens java.net.http/jdk.internal.net.http=ALL-UNNAMED
+                        --add-opens java.net.http/jdk.internal.net.http.common=ALL-UNNAMED
+                    </argLine>
                 </configuration>
             </plugin>
 

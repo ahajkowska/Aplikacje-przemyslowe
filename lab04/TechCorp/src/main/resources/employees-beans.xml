@@ -22,7 +22,7 @@
         <constructor-arg value="Nowak"/>
         <constructor-arg value="anna.nowak@techcorp.com"/>
         <constructor-arg value="TechCorp"/>
-        <constructor-arg value="PROGRAMISTA"/>
+        <constructor-arg value="DEVELOPER"/>
         <constructor-arg value="8500"/>
     </bean>
 

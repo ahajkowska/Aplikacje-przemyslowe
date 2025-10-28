@@ -5,33 +5,45 @@ import com.techcorp.employee.model.ImportSummary;
 import com.techcorp.employee.service.ApiService;
 import com.techcorp.employee.service.EmployeeService;
 import com.techcorp.employee.service.ImportService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.ImportResource;
+import org.springframework.core.io.ClassPathResource;
 
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 
 @SpringBootApplication
-@ComponentScan(basePackages = "com.techcorp.employee")
+@ImportResource("classpath:employees-beans.xml")
 public class EmployeeManagementApplication implements CommandLineRunner {
+
+    private static final Logger log = LoggerFactory.getLogger(EmployeeManagementApplication.class);
 
     private final EmployeeService employeeService;
     private final ImportService importService;
     private final ApiService apiService;
     private final List<Employee> xmlEmployees;
+    private final String csvFileProperty;
 
     public EmployeeManagementApplication(
             EmployeeService employeeService,
             ImportService importService,
             ApiService apiService,
-            @Qualifier("xmlEmployees") List<Employee> xmlEmployees) {
+            @Qualifier("xmlEmployees") List<Employee> xmlEmployees,
+            @Value("${app.import.csv-file}") String csvFileProperty) {
         this.employeeService = employeeService;
         this.importService = importService;
         this.apiService = apiService;
         this.xmlEmployees = xmlEmployees;
+        this.csvFileProperty = csvFileProperty;
     }
 
     public static void main(String[] args) {
@@ -40,30 +52,24 @@ public class EmployeeManagementApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        System.out.println("EMPLOYEE MANAGEMENT APP");
-        System.out.println("-".repeat(80));
-        System.out.println();
+        log.info("EMPLOYEE MANAGEMENT APP");
+        log.info("-".repeat(80));
 
         // 1. IMPORT PRACOWNIKÓW Z PLIKU CSV
-        System.out.println("1. IMPORT PRACOWNIKÓW Z PLIKU CSV");
-        System.out.println("-".repeat(80));
+        log.info("1. IMPORT PRACOWNIKÓW Z PLIKU CSV");
+        log.info("-".repeat(80));
 
-        String csvPath = "src/main/resources/employees.csv";
-        ImportSummary csvImportSummary = importService.importFromCsv(csvPath);
+        ImportSummary csvImportSummary = importCsvFromClasspath();
 
-        System.out.println("- Zaimportowano: " + csvImportSummary.getImportedCount() + " pracowników");
-
+        log.info("Zaimportowano: {} pracowników", csvImportSummary.getImportedCount());
         if (!csvImportSummary.getErrors().isEmpty()) {
-            System.out.println("- Błędy podczas importu:");
-            csvImportSummary.getErrors().forEach((error) ->
-                    System.out.println(error)
-            );
+            log.warn("Błędy podczas importu:");
+            csvImportSummary.getErrors().forEach(log::warn);
         }
-        System.out.println();
 
         // 2. DODANIE PRACOWNIKÓW Z BEANA XML
-        System.out.println("2. DODANIE PRACOWNIKÓW Z KONFIGURACJI XML");
-        System.out.println("-".repeat(80));
+        log.info("2. DODANIE PRACOWNIKÓW Z KONFIGURACJI XML");
+        log.info("-".repeat(80));
 
         int xmlImportedCount = 0;
         int xmlErrorsCount = 0;
@@ -73,23 +79,19 @@ public class EmployeeManagementApplication implements CommandLineRunner {
                 boolean added = employeeService.addEmployee(employee);
                 if (added) {
                     xmlImportedCount++;
-                    System.out.println("Dodano: " + employee.getFirstName() + " " +
-                            employee.getLastName() + " (" + employee.getEmail() + ")");
+                    log.info("Dodano: {} {} ({})", employee.getFirstName(), employee.getLastName(), employee.getEmail());
                 }
             } catch (IllegalArgumentException e) {
                 xmlErrorsCount++;
-                System.out.println("Błąd dla: " + employee.getEmail() + " - " + e.getMessage());
+                log.warn("Błąd dla: " + employee.getEmail() + " - " + e.getMessage());
             }
         }
 
-        System.out.println("\nPodsumowanie importu z XML:");
-        System.out.println("- Zaimportowano: " + xmlImportedCount + " pracowników");
-        System.out.println("- Błędy: " + xmlErrorsCount);
-        System.out.println();
+        log.info("Podsumowanie importu z XML: Zaimportowano: {} pracowników, Błędy: {}", xmlImportedCount, xmlErrorsCount);
 
         // 3. POBRANIE DANYCH Z REST API
-        System.out.println("3. POBIERANIE PRACOWNIKÓW Z REST API");
-        System.out.println("-".repeat(80));
+        log.info("3. POBIERANIE PRACOWNIKÓW Z REST API");
+        log.info("-".repeat(80));
 
         try {
             List<Employee> apiEmployees = apiService.fetchEmployeesFromApi();
@@ -101,86 +103,92 @@ public class EmployeeManagementApplication implements CommandLineRunner {
                     if (added) {
                         apiImportedCount++;
                     }
-                } catch (IllegalArgumentException e) {
-                    // Email już istnieje - pomijamy
-                }
+                } catch (IllegalArgumentException e) { /* duplikat email */ }
             }
 
-            System.out.println("Pobrano z API: " + apiEmployees.size() + " pracowników");
-            System.out.println("Dodano do systemu: " + apiImportedCount + " nowych pracowników");
+            log.info("Pobrano z API: {} pracowników", apiEmployees.size());
+            log.info("Dodano do systemu: {} nowych pracowników", apiImportedCount);
         } catch (Exception e) {
-            System.out.println("Błąd podczas pobierania danych z API: " + e.getMessage());
+            log.error("Błąd podczas pobierania danych z API: {}", e.getMessage(), e);
         }
-        System.out.println();
+        log.info("");
 
         // 4. WYŚWIETLENIE OGÓLNYCH STATYSTYK
-        System.out.println("4. OGÓLNE STATYSTYKI SYSTEMU");
-        System.out.println("-".repeat(80));
+        log.info("4. OGÓLNE STATYSTYKI SYSTEMU");
+        log.info("-".repeat(80));
 
         List<Employee> allEmployees = employeeService.getAllEmployees();
-        System.out.println("Łączna liczba pracowników w systemie: " + allEmployees.size());
-        System.out.println("Średnie wynagrodzenie: " + String.format("%.2f", employeeService.averageSalary()) + " PLN");
-
+        log.info("Łączna liczba pracowników w systemie: {}", allEmployees.size());
+        log.info("Średnie wynagrodzenie: {} PLN", String.format("%.2f", employeeService.averageSalary()));
         employeeService.getEmployeeWithHighestSalary().ifPresent(emp ->
-                System.out.println("Najwyższe wynagrodzenie: " + emp.getFirstName() + " " +
-                        emp.getLastName() + " - " + emp.getSalary() + " PLN")
+                log.info("Najwyższe wynagrodzenie: {} {} - {} PLN", emp.getFirstName(), emp.getLastName(), emp.getSalary())
         );
-        System.out.println();
+        log.info("");
 
         // 5. STATYSTYKI DLA KONKRETNEJ FIRMY
-        System.out.println("5. STATYSTYKI DLA FIRMY: TechCorp");
-        System.out.println("-".repeat(80));
-
+        log.info("5. STATYSTYKI DLA FIRMY: TechCorp");
+        log.info("-".repeat(80));
         List<Employee> techCorpEmployees = employeeService.findEmployeesInCompany("TechCorp");
-        System.out.println("Liczba pracowników w TechCorp: " + techCorpEmployees.size());
-
+        log.info("Liczba pracowników w TechCorp: {}", techCorpEmployees.size());
         if (!techCorpEmployees.isEmpty()) {
-            double techCorpAvgSalary = techCorpEmployees.stream()
-                    .mapToDouble(Employee::getSalary)
-                    .average()
-                    .orElse(0.0);
-            System.out.println("Średnie wynagrodzenie w TechCorp: " + String.format("%.2f", techCorpAvgSalary) + " PLN");
-
-            System.out.println("\nPracownicy TechCorp:");
+            double techCorpAvgSalary = techCorpEmployees.stream().mapToDouble(Employee::getSalary).average().orElse(0.0);
+            log.info("Średnie wynagrodzenie w TechCorp: {} PLN", String.format("%.2f", techCorpAvgSalary));
             techCorpEmployees.forEach(emp ->
-                    System.out.println("  - " + emp.getFirstName() + " " + emp.getLastName() +
-                            " (" + emp.getPosition() + ") - " + emp.getSalary() + " PLN")
+                    log.info("  - {} {} ({}) - {} PLN", emp.getFirstName(), emp.getLastName(), emp.getPosition(), emp.getSalary())
             );
         }
-        System.out.println();
 
         // 6. GRUPOWANIE PRACOWNIKÓW WEDŁUG STANOWISKA
-        System.out.println("6. LICZBA PRACOWNIKÓW NA POSZCZEGÓLNYCH STANOWISKACH");
-        System.out.println("-".repeat(80));
-
+        log.info("6. LICZBA PRACOWNIKÓW NA POSZCZEGÓLNYCH STANOWISKACH");
+        log.info("-".repeat(80));
         employeeService.countEmployeesOnPositions().forEach((position, count) ->
-                System.out.println("  " + position + ": " + count + " pracowników")
+                log.info("  {}: {} pracowników", position, count)
         );
-        System.out.println();
 
         // 7. WALIDACJA SPÓJNOŚCI WYNAGRODZEŃ
-        System.out.println("7. WALIDACJA SPÓJNOŚCI WYNAGRODZEŃ");
-        System.out.println("-".repeat(80));
+        log.info("7. WALIDACJA SPÓJNOŚCI WYNAGRODZEŃ");
+        log.info("-".repeat(80));
 
         List<Employee> inconsistentSalaries = employeeService.validateSalaryConsistency();
-
         if (inconsistentSalaries.isEmpty()) {
-            System.out.println("Wszystkie wynagrodzenia są zgodne z bazowymi stawkami stanowisk.");
+            log.info("Wszystkie wynagrodzenia są zgodne z bazowymi stawkami stanowisk.");
         } else {
-            System.out.println("Znaleziono " + inconsistentSalaries.size() +
-                    " pracowników z wynagrodzeniem poniżej bazowej stawki:");
-            System.out.println();
-
+            log.warn("Znaleziono {} pracowników z wynagrodzeniem poniżej bazowej stawki:", inconsistentSalaries.size());
             inconsistentSalaries.forEach(emp -> {
                 double baseSalary = emp.getPosition().getBaseSalary();
-                System.out.println(" - " + emp.getFirstName() + " " + emp.getLastName());
-                System.out.println("Stanowisko: " + emp.getPosition());
-                System.out.println("Aktualne wynagrodzenie: " + emp.getSalary() + " PLN");
-                System.out.println("Bazowa stawka: " + baseSalary + " PLN");
-                System.out.println();
+                log.warn("{} {}", emp.getFirstName(), emp.getLastName());
+                log.warn("- Stanowisko: {}", emp.getPosition());
+                log.warn("- Aktualne wynagrodzenie: {} PLN", emp.getSalary());
+                log.warn("- Bazowa stawka: {} PLN", baseSalary);
             });
         }
 
-        System.out.println("!!! Koniec !!!");
+        log.info("!!! Koniec !!!");
+    }
+
+    private ImportSummary importCsvFromClasspath() {
+        ClassPathResource resource = new ClassPathResource(csvFileProperty);
+        Path tempFile = null;
+
+        try (InputStream is = resource.getInputStream()) {
+            tempFile = Files.createTempFile("employees-", ".csv");
+            Files.copy(is, tempFile, StandardCopyOption.REPLACE_EXISTING);
+            log.debug("Przetwarzanie pliku: {}", csvFileProperty);
+            return importService.importFromCsv(tempFile.toString());
+        } catch (Exception e) {
+            log.error("Błąd podczas importu '{}': {}", csvFileProperty, e.getMessage(), e);
+            ImportSummary errorSummary = new ImportSummary();
+            errorSummary.addError(0, "Błąd podczas wczytywania: " + e.getMessage());
+            return errorSummary;
+        } finally {
+            if (tempFile != null) {
+                try {
+                    Files.deleteIfExists(tempFile);
+                } catch (Exception ex) {
+                    log.debug("Nie udało się usunąć pliku tymczasowego", ex);
+                }
+            }
+        }
     }
 }
+

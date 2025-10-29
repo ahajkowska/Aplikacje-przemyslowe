@@ -66,6 +66,7 @@ public class EmployeeManagementApplication implements CommandLineRunner {
             log.warn("Błędy podczas importu:");
             csvImportSummary.getErrors().forEach(log::warn);
         }
+        log.info("");
 
         // 2. DODANIE PRACOWNIKÓW Z BEANA XML
         log.info("2. DODANIE PRACOWNIKÓW Z KONFIGURACJI XML");
@@ -88,6 +89,7 @@ public class EmployeeManagementApplication implements CommandLineRunner {
         }
 
         log.info("Podsumowanie importu z XML: Zaimportowano: {} pracowników, Błędy: {}", xmlImportedCount, xmlErrorsCount);
+        log.info("");
 
         // 3. POBRANIE DANYCH Z REST API
         log.info("3. POBIERANIE PRACOWNIKÓW Z REST API");
@@ -118,6 +120,23 @@ public class EmployeeManagementApplication implements CommandLineRunner {
         log.info("-".repeat(80));
 
         List<Employee> allEmployees = employeeService.getAllEmployees();
+
+        if (allEmployees.isEmpty()) {
+            log.warn("Brak pracowników w systemie!");
+        } else {
+            int counter = 1;
+            for (Employee emp : allEmployees) {
+                log.info("{}. {} {} ({})",
+                        counter++,
+                        emp.getFirstName(),
+                        emp.getLastName(),
+                        emp.getEmail());
+                log.info("Stanowisko: {} | Firma: {} | Wynagrodzenie: {} PLN",
+                        emp.getPosition(),
+                        emp.getCompany(),
+                        emp.getSalary());
+            }
+        }
         log.info("Łączna liczba pracowników w systemie: {}", allEmployees.size());
         log.info("Średnie wynagrodzenie: {} PLN", String.format("%.2f", employeeService.averageSalary()));
         employeeService.getEmployeeWithHighestSalary().ifPresent(emp ->
@@ -125,25 +144,36 @@ public class EmployeeManagementApplication implements CommandLineRunner {
         );
         log.info("");
 
-        // 5. STATYSTYKI DLA KONKRETNEJ FIRMY
+        // 5. KONKRETNA FIRMA
         log.info("5. STATYSTYKI DLA FIRMY: TechCorp");
         log.info("-".repeat(80));
         List<Employee> techCorpEmployees = employeeService.findEmployeesInCompany("TechCorp");
-        log.info("Liczba pracowników w TechCorp: {}", techCorpEmployees.size());
-        if (!techCorpEmployees.isEmpty()) {
-            double techCorpAvgSalary = techCorpEmployees.stream().mapToDouble(Employee::getSalary).average().orElse(0.0);
-            log.info("Średnie wynagrodzenie w TechCorp: {} PLN", String.format("%.2f", techCorpAvgSalary));
-            techCorpEmployees.forEach(emp ->
-                    log.info("  - {} {} ({}) - {} PLN", emp.getFirstName(), emp.getLastName(), emp.getPosition(), emp.getSalary())
-            );
+        if (techCorpEmployees.isEmpty()) {
+            log.warn("Brak pracowników w systemie!");
+        } else {
+            int counter = 1;
+            for (Employee emp : techCorpEmployees) {
+                log.info("{}. {} {} ({})",
+                        counter++,
+                        emp.getFirstName(),
+                        emp.getLastName(),
+                        emp.getEmail());
+                log.info("Stanowisko: {} | Wynagrodzenie: {} PLN",
+                        emp.getPosition(),
+                        emp.getCompany(),
+                        emp.getSalary());
+            }
         }
+        log.info("Liczba pracowników w TechCorp: {}", techCorpEmployees.size());
+        log.info("");
 
         // 6. GRUPOWANIE PRACOWNIKÓW WEDŁUG STANOWISKA
         log.info("6. LICZBA PRACOWNIKÓW NA POSZCZEGÓLNYCH STANOWISKACH");
         log.info("-".repeat(80));
         employeeService.countEmployeesOnPositions().forEach((position, count) ->
-                log.info("  {}: {} pracowników", position, count)
+                log.info("{}: {} pracowników", position, count)
         );
+        log.info("");
 
         // 7. WALIDACJA SPÓJNOŚCI WYNAGRODZEŃ
         log.info("7. WALIDACJA SPÓJNOŚCI WYNAGRODZEŃ");

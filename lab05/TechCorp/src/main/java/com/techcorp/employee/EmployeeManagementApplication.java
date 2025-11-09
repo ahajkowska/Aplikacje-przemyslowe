@@ -1,5 +1,6 @@
 package com.techcorp.employee;
 
+import com.techcorp.employee.exception.DuplicateEmailException;
 import com.techcorp.employee.model.Employee;
 import com.techcorp.employee.model.ImportSummary;
 import com.techcorp.employee.service.ApiService;
@@ -82,7 +83,7 @@ public class EmployeeManagementApplication implements CommandLineRunner {
                     xmlImportedCount++;
                     log.info("Dodano: {} {} ({})", employee.getFirstName(), employee.getLastName(), employee.getEmail());
                 }
-            } catch (IllegalArgumentException e) {
+            } catch (DuplicateEmailException | IllegalArgumentException e) {
                 xmlErrorsCount++;
                 log.warn("Błąd dla: " + employee.getEmail() + " - " + e.getMessage());
             }
@@ -105,7 +106,7 @@ public class EmployeeManagementApplication implements CommandLineRunner {
                     if (added) {
                         apiImportedCount++;
                     }
-                } catch (IllegalArgumentException e) {
+                } catch (DuplicateEmailException | IllegalArgumentException e) {
                     /* duplikat email */
                     log.warn("Nie dodano pracownika z API: {}", e.getMessage());
                 }

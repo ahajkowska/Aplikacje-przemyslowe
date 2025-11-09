@@ -30,6 +30,12 @@
             <artifactId>spring-boot-starter</artifactId>
         </dependency>
 
+        <!-- Spring Boot Web - dla REST API -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
         <!-- Testy Spring Boot (JUnit5, Mockito itp.) -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

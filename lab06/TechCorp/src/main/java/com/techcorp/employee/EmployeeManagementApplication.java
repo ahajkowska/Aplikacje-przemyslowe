@@ -28,6 +28,12 @@ public class EmployeeManagementApplication implements CommandLineRunner {
 
     private static final Logger log = LoggerFactory.getLogger(EmployeeManagementApplication.class);
 
+    @Value("${app.upload.directory:uploads/}")
+    private String uploadDirectory;
+
+    @Value("${app.reports.directory:reports/}")
+    private String reportsDirectory;
+
     private final EmployeeService employeeService;
     private final ImportService importService;
     private final ApiService apiService;
@@ -55,6 +61,18 @@ public class EmployeeManagementApplication implements CommandLineRunner {
     public void run(String... args) throws Exception {
         log.info("EMPLOYEE MANAGEMENT APP");
         log.info("-".repeat(80));
+
+        // Upewnij się, że katalogi do uploadu i raportów istnieją
+        try {
+            Path uploadsPath = Path.of(uploadDirectory);
+            Path reportsPath = Path.of(reportsDirectory);
+            Files.createDirectories(uploadsPath);
+            Files.createDirectories(reportsPath);
+            log.info("Katalog uploadów: {}", uploadsPath.toAbsolutePath());
+            log.info("Katalog raportów: {}", reportsPath.toAbsolutePath());
+        } catch (Exception e) {
+            log.error("Nie udało się utworzyć katalogów upload/reports: {}", e.getMessage(), e);
+        }
 
         // 1. IMPORT PRACOWNIKÓW Z PLIKU CSV
         log.info("1. IMPORT PRACOWNIKÓW Z PLIKU CSV");

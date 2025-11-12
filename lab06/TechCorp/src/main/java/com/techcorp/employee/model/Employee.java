@@ -10,6 +10,7 @@ public class Employee {
     private final Position position;
     private double salary;
     private EmploymentStatus status;
+    private String photoFileName;  // Nazwa pliku ze zdjęciem profilowym
 
     // konstruktor z bazową pensją
     public Employee(String firstName, String lastName, String email, String company, Position position) {
@@ -116,6 +117,14 @@ public class Employee {
             throw new IllegalArgumentException("Status cannot be null");
         }
         this.status = status;
+    }
+
+    public String getPhotoFileName() {
+        return photoFileName;
+    }
+
+    public void setPhotoFileName(String photoFileName) {
+        this.photoFileName = photoFileName;
     }
 
     @Override

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<employees>
+    <employee>
+        <firstName>Piotr</firstName>
+        <lastName>Testowy</lastName>
+        <email>piotr.testowy@example.com</email>
+        <company>TestCorp</company>
+        <position>DEVELOPER</position>
+        <salary>9000</salary>
+    </employee>
+    <employee>
+        <firstName>Maria</firstName>
+        <lastName>Przykładowa</lastName>
+        <email>maria.przykladowa@example.com</email>
+        <company>TestCorp</company>
+        <position>ANALYST</position>
+        <salary>7500</salary>
+    </employee>
+    <employee>
+        <firstName>Karol</firstName>
+        <lastName>Żądny</lastName>
+        <email>karol.zadny@example.com</email>
+        <company>TestCorp</company>
+        <position>MANAGER</position>
+        <salary>15000</salary>
+    </employee>
+</employees>
